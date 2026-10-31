@@ -1,11 +1,11 @@
 {
-  "id": "b654c09f-15d4-4470-bdab-22a7d03f2fa1",
+  "id": "4b001add-7aa6-4e81-a2fa-f1673a6b6904",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.data_points": {
-      "name": "data_points",
+    "public.notes": {
+      "name": "notes",
       "schema": "",
       "columns": {
         "id": {
@@ -15,38 +15,14 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "metric_id": {
-          "name": "metric_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "value": {
-          "name": "value",
-          "type": "double precision",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "recorded_at": {
-          "name": "recorded_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "source_kind": {
-          "name": "source_kind",
+        "owner_id": {
+          "name": "owner_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "source_id": {
-          "name": "source_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "source_name": {
-          "name": "source_name",
+        "body": {
+          "name": "body",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -60,125 +36,31 @@
         }
       },
       "indexes": {
-        "data_points_metric_id_recorded_at_idx": {
-          "name": "data_points_metric_id_recorded_at_idx",
+        "notes_owner_id_created_at_idx": {
+          "name": "notes_owner_id_created_at_idx",
           "columns": [
             {
-              "expression": "metric_id",
+              "expression": "owner_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
             },
             {
-              "expression": "recorded_at",
+              "expression": "created_at",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
             }
           ],
-          "isUnique": true,
+          "isUnique": false,
           "concurrently": false,
           "method": "btree",
           "with": {}
         }
       },
-      "foreignKeys": {
-        "data_points_metric_id_metrics_id_fk": {
-          "name": "data_points_metric_id_metrics_id_fk",
-          "tableFrom": "data_points",
-          "tableTo": "metrics",
-          "columnsFrom": [
-            "metric_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.metrics": {
-      "name": "metrics",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "key": {
-          "name": "key",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "unit": {
-          "name": "unit",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "''"
-        },
-        "target": {
-          "name": "target",
-          "type": "double precision",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "direction": {
-          "name": "direction",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "owner": {
-          "name": "owner",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "''"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "metrics_key_unique": {
-          "name": "metrics_key_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "key"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
