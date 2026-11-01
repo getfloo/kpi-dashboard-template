@@ -2,6 +2,8 @@
 
 A KPI dashboard for your team: every metric you track on one page, with targets and trends, kept current by people and by the scripts and agents that push numbers through its API.
 
+![KPI dashboard running on floo, with sample data](docs/screenshot.png)
+
 ## What you get
 
 - Sign-in for your team with floo accounts. Admins create and edit metrics; members record values.
