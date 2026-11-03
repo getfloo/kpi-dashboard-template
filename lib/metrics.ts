@@ -15,6 +15,13 @@ export class RequestError extends Error {
   }
 }
 
+/** An app API key may create and edit metrics. A person, on the pages or with their own floo key on /api, must be an admin. */
+export function requireMetricEditor(caller: Caller): void {
+  if (caller.kind === "user" && caller.role !== "admin") {
+    throw new RequestError(403, "Only app admins can create or edit metrics.");
+  }
+}
+
 export function metricNotFound(key: string): RequestError {
   return new RequestError(404, `No metric with key "${key}". Create it first with POST /api/metrics.`);
 }

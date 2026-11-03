@@ -38,6 +38,7 @@ export const MetricSummaryJson = MetricJson.extend({
 
 const KeyParam = z.object({ key: MetricKey });
 const notFound = { description: "No metric has this key.", schema: ApiError };
+const notAdmin = { description: "A member's own floo key; only app admins create or edit metrics.", schema: ApiError };
 
 // The contract for ./route.ts, ./[key]/route.ts and ./[key]/points/route.ts. Listed
 // in app/api/operations.ts; the tests fail if a handler is missing here or a
@@ -59,6 +60,7 @@ export const operations: Operation[] = [
     responses: {
       201: { description: "The created metric.", schema: z.object({ metric: MetricJson }) },
       400: { description: "The body is not JSON or a field is invalid.", schema: ApiError },
+      403: notAdmin,
       409: { description: "A metric with this key already exists.", schema: ApiError },
     },
   },
@@ -88,6 +90,7 @@ export const operations: Operation[] = [
     responses: {
       200: { description: "The updated metric.", schema: z.object({ metric: MetricJson }) },
       400: { description: "The body is not JSON or a field is invalid.", schema: ApiError },
+      403: notAdmin,
       404: notFound,
     },
   },
