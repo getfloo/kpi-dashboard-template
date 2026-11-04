@@ -9,7 +9,7 @@ A KPI dashboard for your team: every metric you track on one page, with targets 
 - Sign-in for your team with floo accounts. Admins create and edit metrics; members record values.
 - A dashboard of metric cards: latest value, change since the previous value, target status and a sparkline. Each metric has a page with its full chart, history table and a form to record a value.
 - Managed Postgres with Drizzle migrations that run once per deploy.
-- An agent API: push one value, push many in one call, or read a metric with its history, using an app API key. The OpenAPI document is generated from the same validators the app uses.
+- An agent API: push one value, push many in one call, or read a metric with its history, using your own floo key or an app API key. The OpenAPI document is generated from the same validators the app uses.
 - Safe retries: a value sent again for the same metric and `recordedAt` replaces the old one, so a scheduled push never double counts.
 
 ## Deploy with your agent
@@ -83,9 +83,9 @@ floo run --service web -- npm run seed
 | `/metrics/<key>` | Signed in | Chart, history table, record a value |
 | `/metrics/new`, `/metrics/<key>/edit` | Admins | Create or edit a metric |
 | `/api-docs` | Signed in | API reference |
-| `/api/*` | App API key, `api` scope | JSON API |
+| `/api/*` | Members' floo keys, or app API keys with the `api` scope | JSON API |
 
-**Roles.** floo sends each person's app role, `admin` or `member`. Server actions check it: only admins create or edit metrics, anyone signed in records values. An API key holding the `api` scope can create and edit metrics and record values.
+**Roles.** floo sends each person's app role, `admin` or `member`. Server actions check it: only admins create or edit metrics, anyone signed in records values. An API key holding the `api` scope can create and edit metrics and record values. A member's own floo key on `/api` carries their role, so the same admin rule applies there.
 
 **Data model.** `metrics`: `key` (unique, stable, used in URLs and the API), `name`, `unit`, `target`, `direction` (`higher` or `lower` is better), `owner`. `data_points`: `metric_id`, `value`, `recorded_at` (unique per metric), and the source that recorded it: a user, or the API consumer that holds the key.
 

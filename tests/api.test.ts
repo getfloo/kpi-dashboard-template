@@ -154,6 +154,43 @@ describe("PATCH /api/metrics/{key}", () => {
   });
 });
 
+// An app member's own floo key reaches /api as that member, with their app role.
+const asMember = (role: string, path: string, method: string, body: BodyInit) =>
+  new Request(`http://app${path}`, {
+    method,
+    body,
+    headers: {
+      "X-Floo-Auth-Method": "session",
+      "X-Floo-User-Id": "user-7",
+      "X-Floo-User-Email": "sam@example.com",
+      "X-Floo-User-Role": role,
+    },
+  });
+
+describe("a member's floo key on /api", () => {
+  const create = JSON.stringify({ key: "weekly_signups", name: "Signups", direction: "higher" });
+
+  it("refuses a member creating or editing a metric", async () => {
+    const created = await metricsRoute.POST(asMember("member", "/api/metrics", "POST", create));
+    expect(created.status).toBe(403);
+    expect(await expectDocumented("post", "/api/metrics", created)).toEqual({
+      error: "Only app admins can create or edit metrics.",
+    });
+    const edited = await metricRoute.PATCH(asMember("member", "/api/metrics/weekly_signups", "PATCH",
+      JSON.stringify({ target: 450 })), params("weekly_signups"));
+    expect(edited.status).toBe(403);
+    await expectDocumented("patch", "/api/metrics/{key}", edited);
+    expect(createMetric).not.toHaveBeenCalled();
+    expect(updateMetric).not.toHaveBeenCalled();
+  });
+
+  it("lets an admin create a metric", async () => {
+    vi.mocked(createMetric).mockResolvedValue(metric);
+    const response = await metricsRoute.POST(asMember("admin", "/api/metrics", "POST", create));
+    expect(response.status).toBe(201);
+  });
+});
+
 describe("POST /api/metrics/{key}/points", () => {
   const post = (body: BodyInit) =>
     recordOne(request("/api/metrics/weekly_signups/points", "POST", body), params("weekly_signups"));
