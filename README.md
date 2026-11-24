@@ -23,17 +23,16 @@ starter code with this template's files (keep the project's [app] name in
 floo.app.toml), push, and give me the live URL.
 ```
 
-Or do it yourself. Click **Use this template** on GitHub to create your own repo, install the [floo GitHub App](https://github.com/apps/getfloo/installations/new) on it, then:
+Or do it yourself. Click **Use this template** on GitHub to create your own repo, then:
 
 ```sh
-floo apps github setup
-floo preflight
-floo apps github connect <owner>/<repo>
-floo apps github status --app kpi-dashboard
-floo deploys status --app kpi-dashboard
+git clone https://github.com/<you>/<your-repo>.git
+cd <your-repo>
+floo deploy --preflight
+floo deploy
 ```
 
-`floo.app.toml` is already in the repo, so there is no `floo init` step. Every push after that deploys to dev. Invite your team with `floo apps invite teammate@example.com --role member --app kpi-dashboard`.
+`floo.app.toml` is already in the repo, so there is no `floo init` step. `floo deploy` connects your repository, creates the app and deploys it. If floo has no access to the repository yet, it stops with a link to install the floo GitHub App; finish that and run `floo deploy` again. Every push after that deploys to dev. Invite your team with `floo apps invite teammate@example.com --role member --app kpi-dashboard`.
 
 ### Push a value from a script
 
@@ -44,7 +43,7 @@ floo apps consumers create nightly-agent
 floo apps keys create nightly-agent --consumer nightly-agent --scope api
 ```
 
-Then send it as `Authorization: Bearer` to the app URL that `floo deploys status` prints:
+Then send it as `Authorization: Bearer` to the app URL that `floo status` prints:
 
 ```sh
 curl -X POST "$APP_URL/api/metrics/weekly_signups/points" \
